@@ -256,6 +256,33 @@ class BoletoTest extends TestCase
         $this->assertNotNull($boleto->renderPDF());
     }
 
+    public function testBoletoPIX()
+    {
+        $boleto = new Boleto\Bb(
+            [
+                'logo' => realpath(__DIR__ . '/../../logos/') . DIRECTORY_SEPARATOR. '001.png',
+                'dataVencimento' => new \Carbon\Carbon(),
+                'valor' => 100,
+                'multa' => false,
+                'juros' => false,
+                'numero' => 1,
+                'numeroDocumento' => 1,
+                'pagador' => self::$pagador,
+                'beneficiario' => self::$beneficiario,
+                'carteira' => 11,
+                'convenio' => 1234567,
+                'descricaoDemonstrativo' => ['demonstrativo 1', 'demonstrativo 2', 'demonstrativo 3'],
+                'instrucoes' =>  ['instrucao 1', 'instrucao 2', 'instrucao 3'],
+                'aceite' => 'S',
+                'especieDoc' => 'DM',
+                'codigoQrCodePix' => '1234567'
+            ]
+        );
+        $this->assertIsArray($boleto->toArray());
+        $this->assertNotNull($boleto->renderHTML());
+        $this->assertNotNull($boleto->renderPDF());
+    }
+
     public function testBoletoBradesco()
     {
         $boleto = new Boleto\Bradesco(
@@ -455,7 +482,7 @@ class BoletoTest extends TestCase
         $this->assertNotNull($boleto->renderHTML());
         $this->assertNotNull($boleto->renderPDF());
     }
-    
+
     public function testBoletoBnb()
     {
         $boleto = new Boleto\Bnb(

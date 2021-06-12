@@ -47,6 +47,18 @@
                 <div>{{ $beneficiario['endereco'] }}</div>
                 <div>{{ $beneficiario['endereco2'] }}</div>
             </div>
+
+            @if ($codigo_qrcode_pix)
+                <div style="display: inline-block; vertical-align: super; float: right; font-size: 14px">
+                    <b>PAGAMENTO VIA PIX</b><br/>
+                    <center>
+                        <img alt="logo" src="{{ $codigo_qrcode_pix_base64 }}"/>
+                    </center>
+                    Para pagar, leia o QR<br/>
+                    code com seu aplicativo<br/>
+                    do banco.
+                </div>
+            @endif
         </div>
         <br>
 

@@ -11,6 +11,8 @@ use Eduardokum\LaravelBoleto\Contracts\Pessoa as PessoaContract;
 use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
 use Eduardokum\LaravelBoleto\Util;
 
+use chillerlan\QRCode\{QRCode, QROptions};
+
 /**
  * Class AbstractBoleto
  *
@@ -307,6 +309,11 @@ abstract class AbstractBoleto implements BoletoContract
      * @var boolean
      */
     protected $mostrarEnderecoFichaCompensacao = false;
+
+    /**
+     * Código do QRCode do PIX, se nulo, não mostra o QRcode.
+     */
+    protected $codigoQrCodePix = null;
 
     /**
      * AbstractBoleto constructor.
@@ -613,7 +620,7 @@ abstract class AbstractBoleto implements BoletoContract
     {
         return $this->dataDocumento;
     }
-	
+
    /**
      * Retorna a data do juros após
      *
@@ -1536,6 +1543,79 @@ abstract class AbstractBoleto implements BoletoContract
     }
 
     /**
+     * Define o código PIX
+     *
+     * @param  string $codigoQrCodePix
+     *
+     * @return AbstractBoleto
+     */
+    public function setCodigoQrCodePix($codigoQrCodePix)
+    {
+        $this->codigoQrCodePix = $codigoQrCodePix;
+
+        return $this;
+    }
+
+    /**
+     * Retorna o código PIX
+     *
+     * @return string
+     */
+    public function getCodigoQrCodePix()
+    {
+        return $this->codigoQrCodePix;
+    }
+
+    /**
+     * Retorna o logotipo em Base64, pronto para ser inserido na página
+     *
+     * @return string
+     */
+    public function getCodigoQrCodePixBase64()
+    {
+        if ( $this->codigoQrCodePix ) {
+            $pixQrCodeOptions = new QROptions([
+                'version' => 7,
+                'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
+            	'eccLevel'     => QRCode::ECC_L,
+            	'imageBase64'  => true,
+                'scale' => 2.5
+            ]);
+
+            return (new QRCode($pixQrCodeOptions))->render($this->codigoQrCodePix);
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Retorna o QRCode PIX num arquivo temporário, pronto para ser inserido na página
+     *
+     * @return string
+     */
+    public function getCodigoQrCodePixTemp()
+    {
+        if ( $this->codigoQrCodePix ) {
+            $pixQrCodeOptions = new QROptions([
+                'version' => 7,
+                'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
+            	'eccLevel'     => QRCode::ECC_L,
+            	'imageBase64'  => false,
+                'scale' => 5
+            ]);
+
+            $tempFile = tempnam(sys_get_temp_dir(), 'pix-qr');
+
+            (new QRCode($pixQrCodeOptions))->render($this->codigoQrCodePix, $tempFile);
+            return $tempFile;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
      * Render PDF
      *
      * @param bool $print
@@ -1620,6 +1700,8 @@ abstract class AbstractBoleto implements BoletoContract
                     'endereco2' => $this->getBeneficiario()->getCepCidadeUf(),
                     'endereco_completo' => $this->getBeneficiario()->getEnderecoCompleto(),
                 ],
+                'codigo_qrcode_pix' => $this->getCodigoQrCodePix(),
+                'codigo_qrcode_pix_base64' => $this->getCodigoQrCodePixBase64(),
                 'logo_base64' => $this->getLogoBase64(),
                 'logo' => $this->getLogo(),
                 'logo_banco_base64' => $this->getLogoBancoBase64(),

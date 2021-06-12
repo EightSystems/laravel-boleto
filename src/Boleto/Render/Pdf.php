@@ -62,11 +62,20 @@ class Pdf extends AbstractPdf implements PdfContract
             $this->Cell(0, 10, "Boleto " . ($i + 1) . " de " . $this->totalBoletos, 0, 1, 'R');
         }
 
-        $this->SetFont($this->PadraoFont, 'B', 8);
+        $this->SetFont($this->PadraoFont, 'B', 12);
         if ($this->showInstrucoes) {
-            $this->Cell(0, 5, $this->_('Instruções de Impressão'), 0, 1, 'C');
+            $this->Cell(0, 5, $this->_('Instruções de Impressão ou Pagamento com PIX'), 0, 1, 'C');
+            $this->Ln();
+
+            if ($this->boleto[$i]->getCodigoQrCodePix() && !empty($this->boleto[$i]->getCodigoQrCodePix())) {
+                $this->SetFont($this->PadraoFont, 'BU', 10);
+                $this->Cell(0, 5, $this->_('Pagamento com PIX'), 0, 0, 'R');
+                $this->Image($this->boleto[$i]->getCodigoQrCodePixTemp(), 159, ($this->GetY() + 5), 0, 30, 'png');
+                $this->SetFont($this->PadraoFont, 'B', 8);
+            }
+
             $this->Ln(5);
-            $this->SetFont($this->PadraoFont, '', 6);
+            $this->SetFont($this->PadraoFont, '', 7);
             if (count($this->boleto[$i]->getInstrucoesImpressao()) > 0) {
                 $this->listaLinhas($this->boleto[$i]->getInstrucoesImpressao(), 0);
             } else {
@@ -113,6 +122,7 @@ class Pdf extends AbstractPdf implements PdfContract
         if ($this->boleto[$i]->getLogo() && !empty($this->boleto[$i]->getLogo())) {
             $this->Image($this->boleto[$i]->getLogo(), 20, ($this->GetY()), 0, 12, $ext);
         }
+
         $this->Cell(56);
         $this->Cell(0, $this->desc, $this->_($this->boleto[$i]->getBeneficiario()->getNome()), 0, 1);
         $this->Cell(56);
@@ -482,7 +492,7 @@ class Pdf extends AbstractPdf implements PdfContract
         if ($nameFile == null) {
             $nameFile = Str::random(32);
         }
-        
+
         return $this->Output($nameFile . '.pdf', $dest, $this->print);
     }
 
