@@ -41,7 +41,7 @@ $boleto = new Eduardokum\LaravelBoleto\Boleto\Banco\Bb(
         'beneficiario'           => $beneficiario,
         'carteira'               => 11,
         'convenio'               => 1234567,
-        'codigoQrCodePix' => '123456'
+        'codigoQrCodePix' => '00020101021226830014br.gov.bcb.pix2561pix-h.juno.com.br/qr/v2/cobv/C045EBC422A135971FA886FA01C7957B5204000053039865802BR59138SISTEMAS LTD6007ARACAJU62070503***6304FED0'
     ]
 );
 

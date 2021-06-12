@@ -1575,7 +1575,7 @@ abstract class AbstractBoleto implements BoletoContract
     {
         if ( $this->codigoQrCodePix ) {
             $pixQrCodeOptions = new QROptions([
-                'version' => 7,
+                'version' => QRCode::VERSION_AUTO,
                 'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
             	'eccLevel'     => QRCode::ECC_L,
             	'imageBase64'  => true,
@@ -1598,7 +1598,7 @@ abstract class AbstractBoleto implements BoletoContract
     {
         if ( $this->codigoQrCodePix ) {
             $pixQrCodeOptions = new QROptions([
-                'version' => 7,
+                'version' => QRCode::VERSION_AUTO,
                 'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
             	'eccLevel'     => QRCode::ECC_L,
             	'imageBase64'  => false,
